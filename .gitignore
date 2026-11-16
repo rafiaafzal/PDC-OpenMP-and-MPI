@@ -1,0 +1,20 @@
+# Compiled binaries
+serial
+parallel
+parallel_mpi
+pingpong
+*.o
+*.out
+*.exe
+*.so
+*.a
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Windows / editor debris
+*.Identifier
+*Zone.Identifier*
+.DS_Store
+Thumbs.db
