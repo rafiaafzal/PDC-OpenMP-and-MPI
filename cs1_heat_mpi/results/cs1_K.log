@@ -1,0 +1,6 @@
+RESULT cs1 variant=nonblocking_2d N=1024 T=500 p=4 K=1 time=2.870434 comm=1.524406 checksum=1.193868328e+06 maxdiff=4.839310e-02
+RESULT cs1 variant=nonblocking_2d N=1024 T=500 p=4 K=1 time=2.787627 comm=1.540571 checksum=1.193868328e+06 maxdiff=4.839310e-02
+RESULT cs1 variant=nonblocking_2d N=1024 T=500 p=4 K=1 time=2.692168 comm=1.368951 checksum=1.193868328e+06 maxdiff=4.839310e-02
+RESULT cs1 variant=nonblocking_2d N=1024 T=500 p=4 K=50 time=2.318598 comm=1.536340 checksum=1.193868328e+06 maxdiff=4.839310e-02
+RESULT cs1 variant=nonblocking_2d N=1024 T=500 p=4 K=50 time=1.011279 comm=0.333098 checksum=1.193868328e+06 maxdiff=4.839310e-02
+RESULT cs1 variant=nonblocking_2d N=1024 T=500 p=4 K=50 time=1.107769 comm=0.495606 checksum=1.193868328e+06 maxdiff=4.839310e-02

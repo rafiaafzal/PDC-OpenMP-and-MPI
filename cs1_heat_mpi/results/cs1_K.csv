@@ -1,0 +1,7 @@
+group,label,p,run,time
+K1,nonblocking_2d,4,1,2.870434
+K1,nonblocking_2d,4,2,2.787627
+K1,nonblocking_2d,4,3,2.692168
+K50,nonblocking_2d,4,1,2.318598
+K50,nonblocking_2d,4,2,1.011279
+K50,nonblocking_2d,4,3,1.107769
