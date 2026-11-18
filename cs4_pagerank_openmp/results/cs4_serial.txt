@@ -1,0 +1,1 @@
+RESULT cs4 variant=serial n=1048576 m=8388608 p=1 iters=25 time=1.491216 time_per_iter=0.059649 medges_s=140.63 rank_sum=1.000000000
