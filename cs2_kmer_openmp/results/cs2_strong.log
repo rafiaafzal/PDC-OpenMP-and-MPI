@@ -1,0 +1,42 @@
+RESULT cs2 variant=serial L=100000000 k=8 skew=0 p=1 time=0.338998 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=294.99
+RESULT cs2 variant=serial L=100000000 k=8 skew=0 p=1 time=0.362713 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=275.70
+RESULT cs2 variant=serial L=100000000 k=8 skew=0 p=1 time=0.231142 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=432.64
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=1 time=0.825794 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=121.10 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=1 time=0.778634 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=128.43 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=1 time=0.743750 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=134.45 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=1 time=0.166159 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=601.83 extraMB=0.25 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=1 time=0.147178 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=679.45 extraMB=0.25 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=1 time=0.163251 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=612.55 extraMB=0.25 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=2 time=0.875050 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=114.28 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=2 time=0.822088 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=121.64 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=2 time=0.807225 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=123.88 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=2 time=0.078448 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=1274.73 extraMB=0.50 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=2 time=0.103641 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=964.87 extraMB=0.50 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=2 time=0.095042 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=1052.16 extraMB=0.50 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=4 time=0.735890 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=135.89 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=4 time=0.759024 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=131.75 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=8 skew=0 p=4 time=0.736485 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=135.78 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=4 time=0.133973 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=746.42 extraMB=1.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=4 time=0.124916 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=800.54 extraMB=1.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=8 skew=0 p=4 time=0.110377 total=99999993 expected=99999993 checksum=8956218861015476594 Mkmers_s=905.98 extraMB=1.00 COUNT_OK
+RESULT cs2 variant=serial L=100000000 k=12 skew=0 p=1 time=2.892632 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=34.57
+RESULT cs2 variant=serial L=100000000 k=12 skew=0 p=1 time=3.225901 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=31.00
+RESULT cs2 variant=serial L=100000000 k=12 skew=0 p=1 time=2.877324 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=34.75
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=1 time=3.225584 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=31.00 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=1 time=2.765822 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=36.16 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=1 time=2.950849 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=33.89 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=1 time=3.453749 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=28.95 extraMB=64.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=1 time=3.584244 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=27.90 extraMB=64.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=1 time=3.733663 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=26.78 extraMB=64.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=2 time=1.967270 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=50.83 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=2 time=2.217095 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=45.10 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=2 time=1.962418 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=50.96 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=2 time=2.948050 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=33.92 extraMB=128.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=2 time=2.726132 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=36.68 extraMB=128.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=2 time=2.684547 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=37.25 extraMB=128.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=4 time=1.794536 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=55.72 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=4 time=1.591101 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=62.85 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=B L=100000000 k=12 skew=0 p=4 time=1.634141 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=61.19 extraMB=0.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=4 time=2.901760 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=34.46 extraMB=256.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=4 time=2.776840 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=36.01 extraMB=256.00 COUNT_OK
+RESULT cs2 variant=C L=100000000 k=12 skew=0 p=4 time=2.952429 total=99999989 expected=99999989 checksum=2290262204250760007 Mkmers_s=33.87 extraMB=256.00 COUNT_OK
