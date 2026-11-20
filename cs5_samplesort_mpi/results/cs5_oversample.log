@@ -1,0 +1,8 @@
+RESULT cs5 variant=samplesort N=100000000 dist=1 p=4 oversample=1 time=5.477224 t_sort=4.643891 t_sample=0.055976 t_counts=0.182246 t_alltoallv=0.058054 t_merge=0.616352 max_per_rank=25014258 min_per_rank=24989989 max_over_mean=1.001 checksum=85911558334924619 VERIFIED
+ELEMENTS_PER_RANK 25014258 24990010 24989989 25005743
+RESULT cs5 variant=samplesort N=100000000 dist=1 p=4 oversample=4 time=5.678718 t_sort=4.782463 t_sample=0.073720 t_counts=0.250825 t_alltoallv=0.102617 t_merge=0.610016 max_per_rank=30750967 min_per_rank=23081129 max_over_mean=1.230 checksum=85911558334924619 VERIFIED
+ELEMENTS_PER_RANK 30750967 23081129 23082042 23085862
+RESULT cs5 variant=samplesort N=100000000 dist=1 p=4 oversample=16 time=5.573079 t_sort=4.685949 t_sample=0.085803 t_counts=0.217666 t_alltoallv=0.055081 t_merge=0.647727 max_per_rank=26508790 min_per_rank=24495177 max_over_mean=1.060 checksum=85911558334924619 VERIFIED
+ELEMENTS_PER_RANK 26508790 24495177 24498591 24497442
+RESULT cs5 variant=samplesort N=100000000 dist=1 p=4 oversample=64 time=5.340878 t_sort=4.524174 t_sample=0.073954 t_counts=0.168206 t_alltoallv=0.053467 t_merge=0.594823 max_per_rank=25366887 min_per_rank=24875934 max_over_mean=1.015 checksum=85911558334924619 VERIFIED
+ELEMENTS_PER_RANK 25366887 24875934 24880520 24876659
