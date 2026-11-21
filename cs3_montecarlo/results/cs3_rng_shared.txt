@@ -1,0 +1,1 @@
+RESULT cs3 variant=omp_shared_rng M=1000000 p=4 time=0.449240 price=10.46718566 stderr=0.01471564 bs=10.45058357 abs_err=0.01660209 err_in_se=1.13 Mpaths_s=2.23 

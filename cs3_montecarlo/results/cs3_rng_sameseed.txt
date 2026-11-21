@@ -1,0 +1,1 @@
+RESULT cs3 variant=omp_same_seed M=100000000 p=4 time=6.289228 price=10.45244861 stderr=0.00147237 bs=10.45058357 abs_err=0.00186504 err_in_se=1.27 Mpaths_s=15.90 

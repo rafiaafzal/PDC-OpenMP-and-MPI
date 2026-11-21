@@ -1,0 +1,1 @@
+RESULT cs3 variant=omp_independent M=100000000 p=8 time=4.146001 price=10.44831512 stderr=0.00147174 bs=10.45058357 abs_err=0.00226845 err_in_se=1.54 Mpaths_s=24.12 
