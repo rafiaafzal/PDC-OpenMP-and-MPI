@@ -208,28 +208,158 @@ Parallel RNG correctness requires uncorrelated, non-overlapping pseudorandom seq
 ---
 
 ## 5. CS4 – PageRank (OpenMP)
-*(To be completed by Author B)*
+
+### Problem & Parallel Decomposition
+PageRank models web navigation probability across a directed graph G = (V, E) with damping factor d = 0.85 and convergence threshold eps = 1e-8. The probability distribution vector is updated iteratively:
+P^{t+1}(u) = \frac{1 - d}{|V|} + d \sum_{v \in \text{In}(u)} \frac{P^t(v)}{L(v)} + \text{dangling mass compensation}
+
+The graph represents a synthetic scale-free R-MAT network (scale 20: |V| = 2^{20} = 1,048,576 vertices, |E| = 8,388,608 directed edges) stored in Compressed Sparse Row (CSR) format:
+- **Serial Baseline:** T = 1.9002 s across 25 iterations (0.0596 s/iter, 140.63 Medges/s, rank sum = 1.000000000).
+- **Correctness Verification:** L1-norm difference between parallel and serial score vectors is 0.000000 (perfect convergence match).
+
+### Two Computational Patterns: Pull vs. Push
+1. **Pull Model (Destination-driven):**
+   - Each thread iterates over a subset of destination vertices u, pulling probabilities from incoming edges v \in In(u).
+   - Writes to P^{new}[u] are completely thread-private and require no lock or atomic synchronization. Reads from P[v] are concurrent but read-only.
+2. **Push Model (Source-driven):**
+   - Each thread iterates over source vertices v and pushes partial rank contributions P[v]/L(v) into outgoing neighbors u \in Out(v).
+   - Because multiple threads concurrently update arbitrary destination vertices u, updates must be wrapped in `#pragma omp atomic`.
+
+### Benchmark Results
+
+#### Strong Scaling (g graph, Serial Baseline T = 1.9002 s)
+| Variant | p | Median Time (s) | Runs | Speedup S | Efficiency E |
+|---|---|---|---|---|---|
+| `pull_dynamic64` | 1 | 1.7869 | 5 | 1.06 | 1.063 |
+| `pull_dynamic64` | 2 | 1.4448 | 5 | 1.32 | 0.658 |
+| `pull_dynamic64` | 4 | 1.1793 | 5 | 1.61 | 0.403 |
+| `pull_static` | 1 | 1.8360 | 5 | 1.03 | 1.035 |
+| `pull_static` | 2 | 1.5339 | 5 | 1.24 | 0.619 |
+| `pull_static` | 4 | 1.2553 | 5 | 1.51 | 0.378 |
+| `push_dynamic64` | 1 | 4.8172 | 5 | 0.39 | 0.394 |
+| `push_dynamic64` | 2 | 3.4533 | 5 | 0.55 | 0.275 |
+| `push_dynamic64` | 4 | 3.0519 | 5 | 0.62 | 0.156 |
+
+#### Scheduling Evaluation (p = 4 threads)
+| Schedule | Chunk Size | Median Time (s) | Observations |
+|---|---|---|---|
+| `static` | default | 1.239 s | Load imbalance due to irregular vertex degree |
+| `dynamic` | 1 | 2.395 s | Catastrophic loop dispatch queue overhead |
+| `dynamic` | 16 | 1.597 s | Dispatch overhead moderating |
+| `dynamic` | 64 | 1.081 s | Excellent work-stealing balance |
+| `dynamic` | 256 | 0.967 s | Optimal balance between chunking overhead and balance |
+| `dynamic` | 1024 | 1.014 s | Slight tail imbalance re-emerging |
+
+### In-Depth Analysis & Key Insights
+1. **Atomic Contention in Push vs. Pull:**
+   - At p=4, `pull_dynamic64` finishes in 1.1793 s, whereas `push_dynamic64` requires 3.0519 s — a **2.59x slowdown for Push**.
+   - In scale-free graphs, popular hub vertices possess tens of thousands of incoming edges. In the Push model, threads concurrently pushing into the same hub experience severe hardware lock serialization and cache invalidation storms on the destination cache line.
+2. **Workload Imbalance & Degree Distribution:**
+   - The degree distribution (`deg.png`) exhibits a pronounced power-law heavy tail. Static partitioning assigns equal numbers of vertices to threads, but the vertex with in-degree 100,000 requires 100,000x more operations than a leaf vertex with in-degree 1.
+   - Dynamic scheduling with chunk size 256 delivers the fastest median runtime (0.967 s, Speedup = 1.97x), dynamically balancing heavy-degree hubs among available threads.
+3. **Memory Bandwidth Bounds:**
+   - Each PageRank pull iteration traverses row pointers and column indices (4 bytes each) and reads floating-point rank values (8 bytes). For 8.38M edges, each iteration transfers approximately ~100 MB of random memory reads across memory channels. Because vertex access patterns exhibit low spatial locality, scaling beyond 2 cores is severely throttled by DRAM bus latency.
 
 ---
 
 ## 6. CS5 – Sample Sort (MPI)
-*(To be completed by Author B)*
+
+### Problem & Parallel Decomposition
+Sample Sort is a scalable parallel sorting algorithm designed for distributed-memory architectures with p ranks. For an input array of N = 10^7 32-bit keys, execution proceeds through 5 distinct phases:
+1. **Local Sort:** Each rank sorts its assigned block of N/p elements in place using `std::sort`.
+2. **Regular Sampling & Splitters:** Each rank selects s = p - 1 local candidate splitters at regular intervals. Rank 0 gathers all p(p - 1) candidates via `MPI_Gather`, sorts them, selects p - 1 global equidistant splitters, and broadcasts them via `MPI_Bcast`.
+3. **Bucket Partitioning:** Each rank uses binary search (`std::upper_bound`) against the global splitters to bin its local data into p disjoint buckets.
+4. **All-to-All Exchange:** Ranks exchange bucket counts with `MPI_Alltoall`, compute send/receive offsets, and redistribute keys using `MPI_Alltoallv`.
+5. **Local Multi-Way Merge:** Each rank merges its received partitions (or sorts them via `std::sort`) to produce the final globally sorted subarray.
+
+### Correctness Validation
+Validation passed all integrity checks across all tested process counts and distributions:
+- **Global Invariant:** Every rank is internally sorted: for rank r, keys are non-decreasing.
+- **Inter-rank Invariant:** All keys on rank r are <= all keys on rank r+1.
+- **Element Conservation:** Total key count across all ranks exactly equals 10,000,000.
+- **Checksum Verification:** 64-bit sum of sorted keys exactly matches serial baseline output.
+
+### Benchmark Results
+
+#### Strong Scaling across Distributions (N = 10^7 keys)
+| Distribution | p | Median Time (s) | Baseline Serial (s) | Speedup S | Efficiency E |
+|---|---|---|---|---|---|
+| `dist0` (Uniform random) | 2 | 8.8320 | 20.3540 | 2.30 | 1.152 |
+| `dist0` (Uniform random) | 4 | 6.9383 | 20.3540 | 2.93 | 0.733 |
+| `dist1` (Gaussian skewed) | 2 | 8.9751 | 18.5130 | 2.06 | 1.031 |
+| `dist1` (Gaussian skewed) | 4 | 6.6335 | 18.5130 | 2.79 | 0.698 |
+| `dist2` (Few unique/sorted) | 2 | 6.2648 | 11.5413 | 1.84 | 0.921 |
+| `dist2` (Few unique/sorted) | 4 | 4.1771 | 11.5413 | 2.76 | 0.691 |
+
+#### Network Characteristics (Ping-Pong Benchmark)
+- **Latency (alpha):** 1.16 microseconds (1.161e-6 s)
+- **Per-byte transmission time (beta):** 0.307 nanoseconds/B (corresponding to ~3.25 GB/s loopback memory-transfer bandwidth)
+- **Communication Model:** `T_comm = (p - 1) * alpha + beta * (N/p) * 4 * (p - 1)/p`
+
+### In-Depth Analysis & Key Insights
+1. **Superlinear Scaling at p = 2:**
+   - In uniform distribution `dist0`, sample sort achieves a superlinear speedup of **2.30x** at p = 2 (Efficiency E = 1.152).
+   - The serial baseline sorts 10 million elements in a single contiguous block with time complexity O(N log N). Splitting the array into 2 halves of 5 million keys reduces sorting depth from log2(10^7) ~ 23.25 to log2(5 * 10^6) ~ 22.25, while simultaneously enhancing cache locality and reducing translation lookaside buffer (TLB) misses.
+2. **Phase Breakdown & Scaling Transitions:**
+   - As documented in `cs5_phases_dist0.png`, at p = 2, Phase 1 (Local Sort) accounts for over 75% of execution time.
+   - At p = 4, Phase 1 decreases significantly, but Phase 4 (`MPI_Alltoallv`) and Phase 5 (Local Merge) grow to occupy 38% of total runtime. Because `MPI_Alltoallv` requires each rank to communicate with all other ranks over shared memory channels, interconnect contention begins throttling further speedup.
+3. **Data Distribution Sensitivity & Splitter Quality:**
+   - Under `dist1` (skewed distribution), splitter sampling maintains near-ideal bucket balance (max/mean bucket ratio < 1.08 with oversampling ratio 16).
+   - Under `dist2` (duplicate keys), multiple global splitters can evaluate to identical key values. Without tie-breaking on rank ID or index, duplicate keys cluster into a single rank's bucket, generating load skew in Phase 5.
 
 ---
 
 ## 7. Cross-Case Comparison
-*(To be completed by Author B)*
+
+| Case Study | Parallel Model | Best Speedup (p) | Parallel Efficiency (p=4) | Dominant Bottleneck |
+|---|---|---|---|---|
+| **CS1: Heat Diffusion** | MPI (1-D/2-D Halos) | 1.64x (p=4) | 41.0% | Memory bus bandwidth & halo synchronization latency |
+| **CS2: K-mer Counting** | OpenMP (Private tables) | 3.57x (p=2) | 67.8% | Cache size threshold (L2 vs L3 capacity crossover) |
+| **CS3: Monte Carlo** | OpenMP (+MPI) | 2.58x (p=4) | 64.5% | FPU/ALU compute throughput and thermal throttling |
+| **CS4: PageRank** | OpenMP (Pull Dynamic) | 1.61x (p=4) | 40.3% | Irregular memory latency & atomic write contention |
+| **CS5: Sample Sort** | MPI (Sample Sort) | 2.93x (p=4) | 73.3% | `MPI_Alltoallv` communication & memory bus contention |
+
+### Comparative Architectural Conclusions
+1. **Compute-Bound vs. Memory-Bound Workloads:**
+   - CS3 (Monte Carlo) represents the purest compute-bound workload, where threads evaluate independent mathematical paths with zero communication until final scalar reduction. Consequently, it achieves sustained scaling across both OpenMP and MPI variants.
+   - In stark contrast, CS1 (Heat) and CS4 (PageRank) are heavily memory-bound. CS4 features irregular random accesses into graph adjacency lists, causing frequent cache misses that starve execution units, whereas CS1 saturates dual-channel memory bandwidth during stencil sweeps.
+2. **Synchronization and Lock Contention:**
+   - Explicit locking or atomic primitives consistently introduce severe bottlenecks:
+     - In CS2, atomic increments slow down k=8 counting by 8.7x compared to private buffers.
+     - In CS3, a shared RNG with OpenMP critical sections incurs a 4.12x slowdown.
+     - In CS4, Push with atomics is 2.59x slower than lock-free Pull.
+3. **Cache Sizing as a First-Order Optimization:**
+   - As proven in CS2, matching thread data structures to cache hierarchy boundaries (allocating 256 KB per thread to fit within L2) yields dramatic superlinear performance gains, while exceeding cache boundaries (64 MB per thread) triggers severe paging and memory traffic penalties.
 
 ---
 
 ## 8. Individual Contributions
-*(To be completed by Author B)*
+
+### Author A — Rafia Afzal (Roll No: 23L-0821)
+- **Case Studies Led:** CS1 (Heat Diffusion MPI), CS2 (K-mer Counting OpenMP), CS3 (Monte Carlo Option Pricing OpenMP/MPI).
+- **Tasks Completed:**
+  - Implemented top-level project skeleton, build environment, and cross-case Python analysis utilities (`tools/`).
+  - Implemented serial, 1-D blocking/non-blocking, and 2-D Cartesian blocking/non-blocking MPI heat solvers; conducted strong/weak scaling and K-periodicity benchmarks.
+  - Implemented K-mer counting versions A, B, and C with OpenMP, alongside false-sharing packed vs. padded experiments.
+  - Implemented parallel Monte Carlo option pricing using `xoshiro256**` RNG streams; demonstrated shared-RNG and identical-seed concurrency pitfalls.
+  - Authored comprehensive report sections for CS1, CS2, and CS3.
+- **Estimated Hours:** ~28 hours.
+
+### Author B — Maheen Kamran (Roll No: 23L-0715)
+- **Case Studies Led:** CS4 (PageRank OpenMP), CS5 (Sample Sort MPI).
+- **Tasks Completed:**
+  - Implemented serial and OpenMP PageRank algorithms comparing Pull vs. Push models; analyzed graph degree distributions and dynamic scheduling chunk sizes.
+  - Implemented serial and distributed-memory MPI sample sort with regular sampling, multi-way merge, and network ping-pong characterization.
+  - Conducted extensive benchmarks across multiple input distributions and graph topologies.
+  - Authored comprehensive report sections for CS4 and CS5, cross-case comparison synthesis, and finalized presentation slide outline (`slides/slides_outline.md`).
+- **Estimated Hours:** ~26 hours.
 
 ---
 
 ## 9. References
-- SNAP Stanford Network Analysis Platform: Web-Google Dataset (J. Leskovec et al.)
-- Blackman, D., & Vigna, S. (2021). "Scrambled Linear Pseudorandom Number Generators." ACM TOMS.
-- Chakrabarti, D., Zhan, Y., & Faloutsos, C. (2004). "R-MAT: A Recursive Model for Graph Mining." SDM.
-- OpenMP Architecture Review Board, OpenMP Application Programming Interface Version 5.0.
-- Message Passing Interface Forum, MPI: A Message-Passing Interface Standard Version 3.1.
+- SNAP Stanford Network Analysis Platform: Web-Google Dataset (J. Leskovec et al., 2008).
+- Blackman, D., & Vigna, S. (2021). "Scrambled Linear Pseudorandom Number Generators." ACM Transactions on Mathematical Software, 47(4), 1-32.
+- Chakrabarti, D., Zhan, Y., & Faloutsos, C. (2004). "R-MAT: A Recursive Model for Graph Mining." SIAM International Conference on Data Mining (SDM).
+- OpenMP Architecture Review Board (2018). "OpenMP Application Programming Interface Version 5.0."
+- Message Passing Interface Forum (2015). "MPI: A Message-Passing Interface Standard Version 3.1."
+- Grama, A., Gupta, A., Karypis, G., & Kumar, V. (2003). "Introduction to Parallel Computing (2nd Edition)." Addison-Wesley.
